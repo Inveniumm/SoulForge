@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "527401676781",
+    "project_id": "soulforge-2e72d",
+    "storage_bucket": "soulforge-2e72d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527401676781:android:22443e3327c75c9abe41e4",
+        "android_client_info": {
+          "package_name": "com.example.soulforge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527401676781-hkq7p0rpvj9d7uev55hg9dfufri2qsc9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxGg2ESCGA7IJWjmVxf01buyimil9fNVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527401676781-hkq7p0rpvj9d7uev55hg9dfufri2qsc9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
