@@ -25,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
                 if(user == null){
                     startActivity(new Intent(SplashActivity.this, FragmentReplacerActivity.class));
                 }else{
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    startActivity(new Intent(SplashActivity.this, FragmentReplacerActivity.class));
                 }
                 finish();
             }

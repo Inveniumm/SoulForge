@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "527401676781-vln3gfbrqi0vu0b0p2c24b8ucekh8ikh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.soulforge",
+            "certificate_hash": "a70f98573e378d2bb6518d0fb7f0329e1c3bf923"
+          }
+        },
+        {
           "client_id": "527401676781-hkq7p0rpvj9d7uev55hg9dfufri2qsc9.apps.googleusercontent.com",
           "client_type": 3
         }

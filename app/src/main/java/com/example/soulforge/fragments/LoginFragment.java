@@ -55,7 +55,6 @@ public class LoginFragment extends Fragment {
     public LoginFragment() {
         // Required empty public constructor
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,12 +68,64 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
-
         clickListener();
 
     }
 
-    private void init(View view) {
+    public void clickListener(){
+
+//        forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ((FragmentReplacerActivity) getActivity()).setFragment(new ForgotPassword());
+//            }
+//        });
+        loginBtn.setOnClickListener((v) -> {
+
+            String email = emailEt.getText().toString();
+            String password = passwordET.getText().toString();
+
+            if(email.isEmpty() || !email.matches(EMAIL_REGEX)){
+                emailEt.setError("Input Valid email address");
+                return;
+            }
+            if(password.isEmpty() || password.length()< 6){
+                passwordET.setError("Input Valid Password");
+                return;
+
+            }
+            progressBar.setVisibility(View.VISIBLE);
+            auth.signInWithEmailAndPassword(email,password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+
+                            FirebaseUser user = auth.getCurrentUser();
+
+                            if(!user.isEmailVerified()){
+                                Toast.makeText(getContext(), "Please Verify your email address", Toast.LENGTH_SHORT).show();
+                            }
+
+                            sendUserToMainActivity();
+
+                        }else{
+                            String exception = "Error: "+ task.getException().getMessage();
+                            Toast.makeText(getContext(), exception, Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+        });
+
+
+        googleSignInBtn.setOnClickListener(v -> {signIn();});
+
+        signUpTv.setOnClickListener((v) -> {
+            ((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
+        });
+    }
+
+
+
+    private void init(View view){
 
         emailEt = view.findViewById(R.id.emailET);
         passwordET = view.findViewById(R.id.passwordET);
@@ -85,7 +136,7 @@ public class LoginFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
 
         auth = FirebaseAuth.getInstance();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
@@ -93,49 +144,9 @@ public class LoginFragment extends Fragment {
         mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
     }
-    private void clickListener(){
-        loginBtn.setOnClickListener(new View.OnClickListener(){
 
-            @Override
-            public void onClick(View v) {
-                String email = emailEt.getText().toString();
-                String password = passwordET.getText().toString();
 
-                if(email.isEmpty() || !email.matches(EMAIL_REGEX)){
-                    emailEt.setError("Input Valid email address");
-                    return;
-                }
-                if(password.isEmpty() || password.length()< 6){
-                    passwordET.setError("Input Valid Password");
-                    return;
 
-                }
-                auth.signInWithEmailAndPassword(email,password)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()){
-
-                                FirebaseUser user = auth.getCurrentUser();
-
-                                if(!user.isEmailVerified()){
-                                    Toast.makeText(getContext(), "Please Verify your email address", Toast.LENGTH_SHORT).show();
-                                }
-
-                                sendUserToMainActivity();
-
-                            }else{
-                                String exception = "Error: "+ task.getException().getMessage();
-                                Toast.makeText(getContext(), exception, Toast.LENGTH_SHORT).show();
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
-            }
-        });
-
-        googleSignInBtn.setOnClickListener(v -> {signIn();});
-
-        signUpTv.setOnClickListener((v) -> {
-            ((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
-        });    }
 
     private void sendUserToMainActivity(){
 
@@ -143,10 +154,9 @@ public class LoginFragment extends Fragment {
             return;
 
         progressBar.setVisibility(View.GONE);
-        startActivity(new Intent(getActivity().getApplicationContext(), MainActivity.class));
+        startActivity(new Intent(getContext().getApplicationContext(), MainActivity.class));
         getActivity().finish();
     }
-
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -197,24 +207,28 @@ public class LoginFragment extends Fragment {
         map.put("email", account.getEmail());
         map.put("profileImage", String.valueOf(account.getPhotoUrl()));
         map.put("uid", user.getUid());
-
+        map.put("following", 0);
+        map.put("followers", 0);
+        map.put("status", " ");
 
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
                 .set(map)
-                .addOnCompleteListener(task -> {
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
 
-                    if (task.isSuccessful()){
-                        assert getActivity() !=null;
-                        progressBar.setVisibility(View.GONE);
-                        sendUserToMainActivity();
+                        if (task.isSuccessful()){
+                            assert getActivity() !=null;
+                            progressBar.setVisibility(View.GONE);
+                            sendUserToMainActivity();
 
-                    }else{
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Error: "+task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        }else{
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Error: "+task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
 
 }
-
