@@ -16,7 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.soulforge.FragmentReplacerActivity;
+import com.example.soulforge.ReplacerActivity;
 import com.example.soulforge.MainActivity;
 import com.example.soulforge.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -82,7 +81,7 @@ public class CreateAccountFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                ((FragmentReplacerActivity) getActivity()).setFragment(new LoginFragment());
+                ((ReplacerActivity) getActivity()).setFragment(new LoginFragment());
 
             }
         });

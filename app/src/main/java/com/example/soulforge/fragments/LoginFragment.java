@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.soulforge.FragmentReplacerActivity;
+import com.example.soulforge.ReplacerActivity;
 import com.example.soulforge.MainActivity;
 import com.example.soulforge.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -77,7 +77,7 @@ public class LoginFragment extends Fragment {
 //        forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                ((FragmentReplacerActivity) getActivity()).setFragment(new ForgotPassword());
+//                ((ReplacerActivity) getActivity()).setFragment(new ForgotPassword());
 //            }
 //        });
         loginBtn.setOnClickListener((v) -> {
@@ -119,7 +119,7 @@ public class LoginFragment extends Fragment {
         googleSignInBtn.setOnClickListener(v -> {signIn();});
 
         signUpTv.setOnClickListener((v) -> {
-            ((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
+            ((ReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
         });
     }
 

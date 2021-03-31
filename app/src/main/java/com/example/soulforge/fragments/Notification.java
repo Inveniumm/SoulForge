@@ -10,12 +10,9 @@ import android.view.ViewGroup;
 
 import com.example.soulforge.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Notification#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class Notification extends Fragment {
+
 
 
     public Notification() {

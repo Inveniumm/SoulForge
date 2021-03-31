@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import com.example.soulforge.fragments.CreateAccountFragment;
 import com.example.soulforge.fragments.LoginFragment;
 
-public class FragmentReplacerActivity extends AppCompatActivity {
+public class ReplacerActivity extends AppCompatActivity {
 
     private FrameLayout frameLayout;
 

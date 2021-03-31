@@ -226,6 +226,12 @@
 
     </RelativeLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/view" />
+
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
@@ -235,10 +241,7 @@
         android:layout_marginBottom="8dp"
         android:background="#EAEAEA" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/view" />
+
 
 
 </RelativeLayout>
