@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.soulforge.R;
 import com.example.soulforge.adapter.HomeAdapter;
@@ -58,14 +59,13 @@ public class Home extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        init(view);
-
         list = new ArrayList<>();
-        adapter = new HomeAdapter(list, getContext());
-        recyclerView.setAdapter(adapter);
 
         loadDataFromFirestore();
+
+        init(view);
+        adapter = new HomeAdapter(list, getContext());
+        recyclerView.setAdapter(adapter);
     }
 
     private void init(View view) {
@@ -78,11 +78,11 @@ public class Home extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
     }
 
     public void loadDataFromFirestore() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
         CollectionReference reference = FirebaseFirestore.getInstance().collection("Users")
                 .document(user.getUid())
                 .collection("Post Images");
@@ -90,29 +90,24 @@ public class Home extends Fragment {
         reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e("Error: ", error.getMessage());
-                    return;
-                }
-                if (value == null)
-                    return;
-                for (QueryDocumentSnapshot snapshot : value) {
-                    if (!snapshot.exists())
-                        return;
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                user = auth.getCurrentUser();
 
-                    HomeModel model = snapshot.toObject(HomeModel.class);
-                    list.add(new HomeModel(
-                            model.getUserName(),
-                            model.getProfileImage(),
-                            model.getImageUrl(),
-                            model.getUid(),
-                            model.getComments(),
-                            model.getDescription(),
-                            model.getId(),
-                            model.getTimestamp(),
-                            model.getLikeCount()
-                    ));
-                }
+
+
+                HomeModel model = new HomeModel();
+                list.add(new HomeModel(
+                        model.getUserName(),
+                        model.getProfileImage(),
+                        model.getImageUrl(),
+                        model.getUid(),
+                        model.getComments(),
+                        model.getDescription(),
+                        model.getId(),
+                        model.getTimestamp(),
+                        model.getLikeCount()
+                ));
+
                 adapter.notifyDataSetChanged();
             }
         });

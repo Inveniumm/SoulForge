@@ -74,12 +74,12 @@ public class LoginFragment extends Fragment {
 
     public void clickListener(){
 
-//        forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((ReplacerActivity) getActivity()).setFragment(new ForgotPassword());
-//            }
-//        });
+        forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ReplacerActivity) getActivity()).setFragment(new ForgotPassword());
+            }
+        });
         loginBtn.setOnClickListener((v) -> {
 
             String email = emailEt.getText().toString();
