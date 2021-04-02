@@ -19,10 +19,12 @@ import android.widget.Toast;
 import com.example.soulforge.R;
 import com.example.soulforge.adapter.HomeAdapter;
 import com.example.soulforge.model.HomeModel;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -45,6 +47,7 @@ public class Home extends Fragment {
 
     private FirebaseUser user;
 
+
     public Home() {
         // Required empty public constructor
     }
@@ -64,8 +67,10 @@ public class Home extends Fragment {
         loadDataFromFirestore();
 
         init(view);
+
         adapter = new HomeAdapter(list, getContext());
         recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     private void init(View view) {
@@ -86,6 +91,8 @@ public class Home extends Fragment {
         CollectionReference reference = FirebaseFirestore.getInstance().collection("Users")
                 .document(user.getUid())
                 .collection("Post Images");
+        
+        Task<DocumentSnapshot> documentReference = reference.document().get();
 
         reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override

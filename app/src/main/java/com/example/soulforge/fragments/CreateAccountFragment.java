@@ -16,14 +16,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.soulforge.ReplacerActivity;
 import com.example.soulforge.MainActivity;
 import com.example.soulforge.R;
+import com.example.soulforge.ReplacerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -38,15 +39,12 @@ public class CreateAccountFragment extends Fragment {
     private Button signUpBtn;
     private FirebaseAuth auth;
 
+
     public static final String EMAIL_REGEX = "(.+)@(.+)$";
 
-
-
-
-
-    public CreateAccountFragment() {
-        // Required empty public constructor
+    public  CreateAccountFragment() {
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,14 +54,14 @@ public class CreateAccountFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
 
         clickListener();
-
     }
+
 
     private void init(View view){
         nameEt = view.findViewById(R.id.nameET);
@@ -72,11 +70,12 @@ public class CreateAccountFragment extends Fragment {
         confirmPasswordEt = view.findViewById(R.id.confirmPassET);
         loginTv = view.findViewById(R.id.loginTV);
         signUpBtn = view.findViewById(R.id.signUpBtn);
+        progressBar = view.findViewById(R.id.progressBar);
 
         auth =  FirebaseAuth.getInstance();
     }
 
-    private void clickListener() {
+    private void clickListener(){
         loginTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +88,7 @@ public class CreateAccountFragment extends Fragment {
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String name = nameEt.getText().toString();
                 String email = emailEt.getText().toString();
                 String password = passwordEt.getText().toString();
@@ -112,47 +112,70 @@ public class CreateAccountFragment extends Fragment {
                     passwordEt.setError("Passwords do not match");
                     return;
                 }
+
                 progressBar.setVisibility(View.VISIBLE);
+
                 createAccount(name, email, password);
             }
         });
-
     }
-    private void createAccount(String name, String email, String password){
+
+    private void createAccount(final String name, final String email, String password){
 
         auth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            FirebaseUser user = auth.getCurrentUser();
-                            uploadUser(user, name, email);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
 
-                        } else {
-                            progressBar.setVisibility(View.GONE);
-                            String exception = task.getException().getMessage();
-                            Toast.makeText(getContext(), "Error: "+exception, Toast.LENGTH_SHORT).show();
-                        }
+                        FirebaseUser user = auth.getCurrentUser();
+
+                        UserProfileChangeRequest.Builder request = new UserProfileChangeRequest.Builder();
+                        request.setDisplayName(name);
+
+                        user.updateProfile(request.build());
+
+                        user.sendEmailVerification()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Toast.makeText(getContext(), "Email Verification link sent", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                        uploadUser(user, name, email);
+
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        String exception = task.getException().getMessage();
+                        Toast.makeText(getContext(), "Error: "+exception, Toast.LENGTH_SHORT).show();
                     }
                 });
 
     }
-    private void uploadUser(FirebaseUser user, String email, String name){
+
+    private void uploadUser(FirebaseUser user, String name, String email){
+
         Map<String, Object> map = new HashMap<>();
         map.put("name", name);
         map.put("email", email);
         map.put("profileImage", "");
         map.put("uid", user.getUid());
+        map.put("following", 0);
+        map.put("followers", 0);
+        map.put("status", " ");
+
 
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
                 .set(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+
                         if (task.isSuccessful()){
                             assert getActivity() !=null;
                             progressBar.setVisibility(View.GONE);
                             startActivity(new Intent(getActivity().getApplicationContext(), MainActivity.class));
+                            getActivity().finish();
 
                         }else{
                             progressBar.setVisibility(View.GONE);

@@ -55,8 +55,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
-
-        holder.userNameTv.setText(list.get(position).getUserName());
+        holder.nameTv.setText(list.get(position).getUserName());
         holder.timeTv.setText(""+list.get(position).getTimestamp());
 
 
@@ -98,7 +97,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
 
     static class HomeHolder extends RecyclerView.ViewHolder{
         private CircleImageView profileImage;
-        private TextView userNameTv, timeTv, likeCountTv, descriptionTv;
+        private TextView nameTv, timeTv, likeCountTv, descriptionTv;
         private ImageView imageView;
         private ImageButton likeBtn, commentBtn, shareBtn;
 
@@ -107,7 +106,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
 
             profileImage = itemView.findViewById(R.id.profileImage);
             imageView = itemView.findViewById(R.id.imageView);
-            userNameTv = itemView.findViewById(R.id.nameTv);
+            nameTv = itemView.findViewById(R.id.nameTv);
             timeTv = itemView.findViewById(R.id.timeTv);
             likeCountTv = itemView.findViewById(R.id.likeCountTv);
             likeBtn = itemView.findViewById(R.id.likeBtn);

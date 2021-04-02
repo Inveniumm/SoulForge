@@ -2,6 +2,7 @@ package com.example.soulforge.fragments;
 
 import android.Manifest;
 import android.Manifest.permission;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -65,6 +66,7 @@ public class Add extends Fragment {
     private FirebaseUser user;
 
     Uri imageUri;
+    Dialog dialog;
 
 
     public Add() {
@@ -141,6 +143,8 @@ public class Add extends Fragment {
 
 
     private void uploadData(String imageURL) {
+
+
         CollectionReference reference = FirebaseFirestore.getInstance().collection("Users")
                 .document(user.getUid()).collection("Post Images");
         String id = reference.document().getId();
@@ -152,7 +156,7 @@ public class Add extends Fragment {
         map.put("imageUrl", imageURL);
         map.put("timestamp", FieldValue.serverTimestamp());
 
-        map.put("userName", user.getDisplayName());
+        map.put("name", user.getDisplayName());
         map.put("profileImage",String.valueOf(user.getPhotoUrl()));
         map.put("likeCount", 0);
         map.put("Comments", "");

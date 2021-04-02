@@ -9,6 +9,7 @@ public class PostImageModel {
 
     @ServerTimestamp
     private Date timestamp;
+
     public PostImageModel(){
 
     }
