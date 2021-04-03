@@ -14,17 +14,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.soulforge.R;
 import com.example.soulforge.adapter.HomeAdapter;
 import com.example.soulforge.model.HomeModel;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -47,7 +44,6 @@ public class Home extends Fragment {
 
     private FirebaseUser user;
 
-
     public Home() {
         // Required empty public constructor
     }
@@ -62,15 +58,14 @@ public class Home extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        list = new ArrayList<>();
-
-        loadDataFromFirestore();
 
         init(view);
 
+        list = new ArrayList<>();
         adapter = new HomeAdapter(list, getContext());
         recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+
+        loadDataFromFirestore();
     }
 
     private void init(View view) {
@@ -82,39 +77,41 @@ public class Home extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
     }
 
     public void loadDataFromFirestore() {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
         CollectionReference reference = FirebaseFirestore.getInstance().collection("Users")
                 .document(user.getUid())
                 .collection("Post Images");
-        
-        Task<DocumentSnapshot> documentReference = reference.document().get();
 
         reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                FirebaseAuth auth = FirebaseAuth.getInstance();
-                user = auth.getCurrentUser();
+                if (error != null) {
+                    Log.e("Error: ", error.getMessage());
+                    return;
+                }
+                if (value == null)
+                    return;
+                for (QueryDocumentSnapshot snapshot : value) {
+                    if (!snapshot.exists())
+                        return;
 
-
-
-                HomeModel model = new HomeModel();
-                list.add(new HomeModel(
-                        model.getUserName(),
-                        model.getProfileImage(),
-                        model.getImageUrl(),
-                        model.getUid(),
-                        model.getComments(),
-                        model.getDescription(),
-                        model.getId(),
-                        model.getTimestamp(),
-                        model.getLikeCount()
-                ));
-
+                    HomeModel model = snapshot.toObject(HomeModel.class);
+                    list.add(new HomeModel(
+                            model.getUserName(),
+                            model.getProfileImage(),
+                            model.getImageUrl(),
+                            model.getUid(),
+                            model.getComments(),
+                            model.getDescription(),
+                            model.getId(),
+                            model.getTimestamp(),
+                            model.getLikeCount()
+                    ));
+                }
                 adapter.notifyDataSetChanged();
             }
         });
