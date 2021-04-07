@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -100,16 +101,12 @@ public class Add extends Fragment {
     }
 
     public void clickListener(){
-        adapter.SendImage(new GalleryAdapter.SendImage() {
-            @Override
-            public void onSend(Uri picUri) {
-                imageUri = picUri;
-                CropImage.activity(picUri)
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setAspectRatio(4,3)
-                        .start(getContext(), Add.this);
+        adapter.SendImage(picUri -> {
+            CropImage.activity(picUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(4,3)
+                    .start(getContext(), Add.this);
 
-            }
         });
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +114,8 @@ public class Add extends Fragment {
             public void onClick(View v) {
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 final StorageReference storageReference = storage.getReference().child("Post Images/"+System.currentTimeMillis());
+
+                dialog.show();
 
                 storageReference.putFile(imageUri)
                         .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -168,9 +167,11 @@ public class Add extends Fragment {
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             System.out.println();
+                            Toast.makeText(getContext(), "Uploaded", Toast.LENGTH_SHORT).show();
                         }else{
                             Toast.makeText(getContext(), "Error: "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
+                        dialog.dismiss();
                     }
                 });
 
@@ -185,6 +186,11 @@ public class Add extends Fragment {
         nextBtn= view.findViewById(R.id.nextBtn);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.loading_dialog);
+        dialog.getWindow().setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.dialog_bg, null));
+        dialog.setCancelable(false);
     }
 
     @Override
@@ -234,10 +240,11 @@ public class Add extends Fragment {
             CropImage.ActivityResult result =  CropImage.getActivityResult(data);
 
             if(resultCode == RESULT_OK){
-                Uri image = result.getUri();
+                assert result != null;
+                imageUri = result.getUri();
 
                 Glide.with(getContext())
-                        .load(image)
+                        .load(imageUri)
                         .into(imageView);
                 imageView.setVisibility(View.VISIBLE);
                 nextBtn.setVisibility(View.VISIBLE);

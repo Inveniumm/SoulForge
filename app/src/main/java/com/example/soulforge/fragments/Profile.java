@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.soulforge.MainActivity;
 import com.example.soulforge.R;
 import com.example.soulforge.model.PostImageModel;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -49,30 +51,34 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.soulforge.MainActivity.IS_SEARCHED_USER;
+import static com.example.soulforge.MainActivity.USER_ID;
+import static com.example.soulforge.fragments.Home.LIST_SIZE;
 
 
-public class Profile extends Fragment {
+public class Profile extends Fragment  {
 
+    boolean isMyProfile = true;
+    String uid;
+    String userUID;
+    FirestoreRecyclerAdapter<PostImageModel, PostImageHolder> adapter;
     private TextView nameTv, toolbarNameTv, statusTv, followingCountTv, followersCountTv, postCountTv;
     private CircleImageView profileImage;
     private Button followBtn;
     private RecyclerView recyclerView;
-
-    private RelativeLayout followLayout;
     private LinearLayout countLayout;
-
     private FirebaseUser user;
     private ImageButton editProfileBtn;
-
-    boolean isMyProfile = true;
-    String uid;
-    FirestoreRecyclerAdapter<PostImageModel, PostImageHolder> adapter;
+    List<Object> followersList, followingList;
+    boolean isFollowed;
+    DocumentReference userRef, myRef;
 
 
     public Profile() {
@@ -92,34 +98,89 @@ public class Profile extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
+        userRef = FirebaseFirestore.getInstance().collection("Users")
+                .document(userUID);
+        myRef = FirebaseFirestore.getInstance().collection("Users")
+                .document(user.getUid());
+
+        if (IS_SEARCHED_USER) {
+            isMyProfile = false;
+            userUID = USER_ID;
+
+            loadData();
+        }else{
+            isMyProfile = true;
+            userUID = user.getUid();
+        }
 
         if (isMyProfile) {
+            editProfileBtn.setVisibility(View.VISIBLE);
             followBtn.setVisibility(View.GONE);
             countLayout.setVisibility(View.VISIBLE);
         } else {
+            editProfileBtn.setVisibility(View.GONE);
             followBtn.setVisibility(View.VISIBLE);
             countLayout.setVisibility(View.GONE);
         }
 
-        loadBasicData();
 
+        loadBasicData();
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+
         loadPostImages();
+
         recyclerView.setAdapter(adapter);
 
+        clickListener();
 
-        editProfileBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CropImage.activity()
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setAspectRatio(1, 1)
-                        .start(requireContext(), Profile.this);
+
+    }
+
+    private void loadData(){
+        
+    }
+
+    private void clickListener(){
+        followBtn.setOnClickListener(v -> {
+            if(isFollowed){
+                followingList.remove(user.getUid());
+                Map<String,Object> map = new HashMap<>();
+                map.put("following", followingList);
+
+                userRef.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            followBtn.setText("Follow");
+                        }else{
+                            Log.e("Tag", ""+ task.getException().getMessage());
+                        }
+                    }
+                });
+
+            }else{
+                followingList.add(userUID);
+                Map<String,Object> map = new HashMap<>();
+                map.put("following", followingList);
+
+                userRef.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            followBtn.setText("UnFollow");
+                        }else{
+                            Log.e("Tag", ""+ task.getException().getMessage());
+                        }
+                    }
+                });
             }
         });
 
-
+        editProfileBtn.setOnClickListener(v -> CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setAspectRatio(1, 1)
+                .start(requireContext(), Profile.this));
     }
 
     private void init(View view) {
@@ -147,8 +208,7 @@ public class Profile extends Fragment {
 
     private void loadBasicData() {
 
-        DocumentReference userRef = FirebaseFirestore.getInstance().collection("Users")
-                .document(user.getUid());
+
 
         userRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -161,22 +221,41 @@ public class Profile extends Fragment {
                 if (value.exists()) {
                     String name = value.getString("name");
                     String status = value.getString("status");
-                    int followers = value.getLong("followers").intValue();
-                    int following = value.getLong("following").intValue();
 
                     String profileURL = value.getString("profileImage");
 
                     nameTv.setText(name);
                     toolbarNameTv.setText(name);
                     statusTv.setText(status);
-                    followersCountTv.setText(String.valueOf(followers));
-                    followingCountTv.setText(String.valueOf(followers));
 
-                    Glide.with(getContext().getApplicationContext())
-                            .load(profileURL)
-                            .placeholder(R.drawable.ic_person)
-                            .timeout(6500)
-                            .into(profileImage);
+                    followersList = (List<Object>) value.getDate("followers");
+                    followingList = (List<Object>) value.getDate("following");
+
+
+
+
+                    followersCountTv.setText("" + followersList.size());
+                    followingCountTv.setText("" + followingList.size());
+
+                    try {
+                        Glide.with(getContext().getApplicationContext())
+                                .load(profileURL)
+                                .placeholder(R.drawable.ic_person)
+                                .timeout(6500)
+                                .into(profileImage);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if(followingList.contains(userUID)){
+                        followBtn.setText("UnFollow");
+                        isFollowed = true;
+
+                    }else{
+                        isFollowed = false;
+                        followBtn.setText("Follow");
+                    }
+
 
                 }
 
@@ -184,17 +263,15 @@ public class Profile extends Fragment {
             }
         });
 
+        postCountTv.setText("" + LIST_SIZE);
+
     }
 
     private void loadPostImages() {
 
-        if (isMyProfile) {
-            uid = user.getUid();
-        } else {
 
-        }
-        DocumentReference reference = FirebaseFirestore.getInstance().collection("Images").document(uid);
-        Query query = reference.collection("Images");
+        DocumentReference reference = FirebaseFirestore.getInstance().collection("Users").document(userUID);
+        Query query = reference.collection("Post Images");
         FirestoreRecyclerOptions<PostImageModel> options = new FirestoreRecyclerOptions.Builder<PostImageModel>()
                 .setQuery(query, PostImageModel.class)
                 .build();
@@ -229,18 +306,6 @@ public class Profile extends Fragment {
     public void onStop() {
         super.onStop();
         adapter.stopListening();
-    }
-
-    private static class PostImageHolder extends RecyclerView.ViewHolder {
-
-        private ImageView imageView;
-
-        public PostImageHolder(@NonNull View itemView) {
-            super(itemView);
-
-            imageView = itemView.findViewById(R.id.imageView);
-        }
-
     }
 
     @Override
@@ -290,11 +355,29 @@ public class Profile extends Fragment {
                                             });
                                         }
                                     });
-                        }else{
+                        } else {
                             Toast.makeText(getContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
 
     }
+
+
+
+    private static class PostImageHolder extends RecyclerView.ViewHolder {
+
+        private ImageView imageView;
+
+        public PostImageHolder(@NonNull View itemView) {
+            super(itemView);
+
+            imageView = itemView.findViewById(R.id.imageView);
+        }
+
+    }
+
+
+
+
 }

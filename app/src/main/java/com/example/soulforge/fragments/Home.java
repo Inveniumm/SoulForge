@@ -44,6 +44,8 @@ public class Home extends Fragment {
 
     private FirebaseUser user;
 
+    public static int LIST_SIZE = 0;
+
     public Home() {
         // Required empty public constructor
     }
@@ -95,6 +97,7 @@ public class Home extends Fragment {
                 }
                 if (value == null)
                     return;
+                list.clear();
                 for (QueryDocumentSnapshot snapshot : value) {
                     if (!snapshot.exists())
                         return;
@@ -113,6 +116,8 @@ public class Home extends Fragment {
                     ));
                 }
                 adapter.notifyDataSetChanged();
+
+                LIST_SIZE = list.size();
             }
         });
 
