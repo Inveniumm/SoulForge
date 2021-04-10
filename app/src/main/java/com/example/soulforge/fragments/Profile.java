@@ -1,5 +1,6 @@
 package com.example.soulforge.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -63,7 +64,7 @@ import static com.example.soulforge.MainActivity.USER_ID;
 import static com.example.soulforge.fragments.Home.LIST_SIZE;
 
 
-public class Profile extends Fragment  {
+public class Profile extends Fragment {
 
     boolean isMyProfile = true;
     String uid;
@@ -76,7 +77,7 @@ public class Profile extends Fragment  {
     private LinearLayout countLayout;
     private FirebaseUser user;
     private ImageButton editProfileBtn;
-    List<Object> followersList, followingList;
+    List<Object> followersList, followingList, followingList_2;
     boolean isFollowed;
     DocumentReference userRef, myRef;
 
@@ -98,8 +99,7 @@ public class Profile extends Fragment  {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
-        userRef = FirebaseFirestore.getInstance().collection("Users")
-                .document(userUID);
+
         myRef = FirebaseFirestore.getInstance().collection("Users")
                 .document(user.getUid());
 
@@ -108,7 +108,7 @@ public class Profile extends Fragment  {
             userUID = USER_ID;
 
             loadData();
-        }else{
+        } else {
             isMyProfile = true;
             userUID = user.getUid();
         }
@@ -120,9 +120,10 @@ public class Profile extends Fragment  {
         } else {
             editProfileBtn.setVisibility(View.GONE);
             followBtn.setVisibility(View.VISIBLE);
-            countLayout.setVisibility(View.GONE);
+            countLayout.setVisibility(View.VISIBLE);
         }
-
+        userRef = FirebaseFirestore.getInstance().collection("Users")
+                .document(userUID);
 
         loadBasicData();
         recyclerView.setHasFixedSize(true);
@@ -137,50 +138,95 @@ public class Profile extends Fragment  {
 
     }
 
-    private void loadData(){
-        
+    private void loadData() {
+        myRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e("Tag_b", error.getMessage());
+                    return;
+                }
+                if (value == null || !value.exists()) {
+                    return;
+                }
+                followingList_2 = (List<Object>) value.get("following");
+            }
+        });
     }
 
-    private void clickListener(){
+    private void clickListener() {
         followBtn.setOnClickListener(v -> {
-            if(isFollowed){
-                followingList.remove(user.getUid());
-                Map<String,Object> map = new HashMap<>();
-                map.put("following", followingList);
 
-                userRef.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            followBtn.setText("Follow");
-                        }else{
-                            Log.e("Tag", ""+ task.getException().getMessage());
-                        }
+            if (isFollowed) {
+
+                followersList.remove(user.getUid());
+                followingList_2.remove(userUID);
+
+                final Map<String, Object> map_2 = new HashMap<>();
+                map_2.put("following", followingList_2);
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("followers", followersList);
+
+                userRef.update(map).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        followBtn.setText("Follow");
+
+                        myRef.update(map_2).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                Toast.makeText(getContext(), "UnFollowed", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.e("Tag_3", task1.getException().getMessage());
+                            }
+                        });
+
+                    } else {
+                        Log.e("Tag", "" + task.getException().getMessage());
                     }
                 });
 
-            }else{
-                followingList.add(userUID);
-                Map<String,Object> map = new HashMap<>();
-                map.put("following", followingList);
+
+            } else {
+
+                followersList.add(user.getUid());
+                followingList_2.add(userUID);
+
+                Map<String, Object> map_2 = new HashMap<>();
+                map_2.put("following", followingList_2);
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("followers", followersList);
 
                 userRef.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             followBtn.setText("UnFollow");
-                        }else{
-                            Log.e("Tag", ""+ task.getException().getMessage());
+                            myRef.update(map_2).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getContext(), "Followed", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Log.e("Tag", " " + task.getException().getMessage());
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.e("Tag", "" + task.getException().getMessage());
                         }
                     }
                 });
+
             }
         });
 
-        editProfileBtn.setOnClickListener(v -> CropImage.activity()
-                .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1, 1)
-                .start(requireContext(), Profile.this));
+        editProfileBtn.setOnClickListener(v -> {
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1, 1)
+                    .start(requireContext(), Profile.this);
+        });
     }
 
     private void init(View view) {
@@ -208,59 +254,53 @@ public class Profile extends Fragment  {
 
     private void loadBasicData() {
 
+        userRef.addSnapshotListener((value, error) -> {
+
+            if (error != null) {
+                Log.e("Tag_0", error.getMessage());
+                return;
+            }
+            assert value != null;
+            if (value.exists()) {
+                String name = value.getString("name");
+                String status = value.getString("status");
+
+                String profileURL = value.getString("profileImage");
+
+                nameTv.setText(name);
+                toolbarNameTv.setText(name);
+                statusTv.setText(status);
+
+                followersList = (List<Object>) value.get("followers");
+                followingList = (List<Object>) value.get("following");
 
 
-        userRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                followersCountTv.setText("" + followersList.size());
+                followingCountTv.setText("" + followingList.size());
 
-                if (error != null)
-                    return;
+                try {
+                    Glide.with(getContext().getApplicationContext())
+                            .load(profileURL)
+                            .placeholder(R.drawable.ic_person)
+                            .timeout(6500)
+                            .into(profileImage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                assert value != null;
-                if (value.exists()) {
-                    String name = value.getString("name");
-                    String status = value.getString("status");
+                if (followingList.contains(userUID)) {
+                    followBtn.setText("UnFollow");
+                    isFollowed = true;
 
-                    String profileURL = value.getString("profileImage");
-
-                    nameTv.setText(name);
-                    toolbarNameTv.setText(name);
-                    statusTv.setText(status);
-
-                    followersList = (List<Object>) value.getDate("followers");
-                    followingList = (List<Object>) value.getDate("following");
-
-
-
-
-                    followersCountTv.setText("" + followersList.size());
-                    followingCountTv.setText("" + followingList.size());
-
-                    try {
-                        Glide.with(getContext().getApplicationContext())
-                                .load(profileURL)
-                                .placeholder(R.drawable.ic_person)
-                                .timeout(6500)
-                                .into(profileImage);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    if(followingList.contains(userUID)){
-                        followBtn.setText("UnFollow");
-                        isFollowed = true;
-
-                    }else{
-                        isFollowed = false;
-                        followBtn.setText("Follow");
-                    }
-
-
+                } else {
+                    isFollowed = false;
+                    followBtn.setText("Follow");
                 }
 
 
             }
+
+
         });
 
         postCountTv.setText("" + LIST_SIZE);
@@ -364,7 +404,6 @@ public class Profile extends Fragment  {
     }
 
 
-
     private static class PostImageHolder extends RecyclerView.ViewHolder {
 
         private ImageView imageView;
@@ -376,8 +415,6 @@ public class Profile extends Fragment  {
         }
 
     }
-
-
 
 
 }
