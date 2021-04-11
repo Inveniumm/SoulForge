@@ -62,7 +62,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
 
         int count = list.get(position).getLikeCount();
         if(count ==0){
-            holder.likeCountTv.setVisibility(View.INVISIBLE);
+            holder.likeCountTv.setVisibility(View.VISIBLE);
         }else if (count == 1){
             holder.likeCountTv.setText(count + " like");
         }else{

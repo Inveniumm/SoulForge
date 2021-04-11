@@ -1,19 +1,24 @@
 package com.example.soulforge;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.example.soulforge.adapter.ViewPagerAdapter;
 import com.example.soulforge.fragments.Search;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 
+import static com.example.soulforge.R.id.logoutTv;
 import static com.example.soulforge.R.layout.activity_main;
 import static com.example.soulforge.utils.Constants.PREF_DIRECTORY;
 import static com.example.soulforge.utils.Constants.PREF_NAME;
@@ -94,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
 //                    case 4:
 //                        tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
 //                        break;
+
+
                 }
             }
 
@@ -177,5 +185,16 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
             super.onBackPressed();
     }
 
-
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case logoutTv:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MainActivity.this, SplashActivity.class));
+                finish();
+                return true;
+        }
+        return false;
+    }
 }

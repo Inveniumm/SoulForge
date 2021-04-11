@@ -25,12 +25,12 @@
         android:layout_centerInParent="true">
         <EditText
             android:id="@+id/nameET"
+            android:background="@drawable/btn_bg"
             android:layout_width= "match_parent"
             android:layout_height="wrap_content"
             android:textSize="24sp"
             android:padding="12dp"
             android:layout_margin= "8dp"
-            android:background="@drawable/text_box"
             android:textColor="#006400"
             android:hint="Name"/>
 
@@ -42,7 +42,7 @@
             android:padding="12dp"
             android:textSize="24sp"
             android:layout_margin= "8dp"
-            android:background="@drawable/text_box"
+            android:background="@drawable/btn_bg"
             android:hint="Email"/>
 
         <EditText
@@ -53,7 +53,7 @@
             android:padding="12dp"
             android:textSize="24sp"
             android:layout_margin= "8dp"
-            android:background="@drawable/text_box"
+            android:background="@drawable/btn_bg"
             android:hint="Password"/>
         <EditText
             android:id="@+id/confirmPassET"
@@ -63,7 +63,7 @@
             android:padding="12dp"
             android:textSize="24sp"
             android:layout_margin= "8dp"
-            android:background="@drawable/text_box"
+            android:background="@drawable/btn_bg"
             android:hint="Confirm Password"/>
     </LinearLayout>
 

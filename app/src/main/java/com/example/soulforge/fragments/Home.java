@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.soulforge.R;
 import com.example.soulforge.adapter.HomeAdapter;
@@ -21,7 +22,6 @@ import com.example.soulforge.model.HomeModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -30,7 +30,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 public class Home extends Fragment {
@@ -43,6 +42,7 @@ public class Home extends Fragment {
     private List<HomeModel> list;
 
     private FirebaseUser user;
+    boolean firstClick = true;
 
 
     public Home() {

@@ -21,10 +21,12 @@ import com.example.soulforge.R;
 import com.example.soulforge.ReplacerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class CreateAccountFragment extends Fragment {
     private TextView loginTv;
     private Button signUpBtn;
     private FirebaseAuth auth;
+    DatabaseReference reference;
 
 
     public static final String EMAIL_REGEX = "(.+)@(.+)$";
@@ -161,7 +164,7 @@ public class CreateAccountFragment extends Fragment {
         List<String> list1 = new ArrayList<>();
 
 
-        Map<String, Object> map = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
         map.put("name", name);
         map.put("email", email);
         map.put("profileImage", "");
@@ -169,8 +172,11 @@ public class CreateAccountFragment extends Fragment {
 //        map.put("status", " ");
         map.put("search", name.toLowerCase());
 
-        map.put("follower", list);
+        map.put("followers", list);
         map.put("following", list1);
+
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+        reference.setValue(map);
 
 
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
@@ -193,4 +199,5 @@ public class CreateAccountFragment extends Fragment {
                     }
                 });
     }
+
 }

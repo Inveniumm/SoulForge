@@ -96,7 +96,7 @@
         android:layout_below="@+id/descTv"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:text="100 likes"
+        android:text="0 likes"
         android:textStyle="bold" />
 
 </RelativeLayout>
