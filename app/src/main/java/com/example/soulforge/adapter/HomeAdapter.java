@@ -1,6 +1,7 @@
 package com.example.soulforge.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
@@ -55,7 +56,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
-        holder.nameTv.setText(list.get(position).getUserName());
+        holder.nameTv.setText(list.get(position).getName());
         holder.timeTv.setText(""+list.get(position).getTimestamp());
 
 
@@ -97,7 +98,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
 
     static class HomeHolder extends RecyclerView.ViewHolder{
         private CircleImageView profileImage;
-        private TextView nameTv, timeTv, likeCountTv, descriptionTv;
+        public TextView nameTv, timeTv, likeCountTv, descriptionTv;
         private ImageView imageView;
         private ImageButton likeBtn, commentBtn, shareBtn;
 

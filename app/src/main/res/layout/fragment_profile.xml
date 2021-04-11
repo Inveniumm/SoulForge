@@ -100,14 +100,14 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/statusTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:text="Love to Travel across the world"
-                android:textColor="@android:color/black"
-                android:textStyle="bold" />
+<!--            <TextView-->
+<!--                android:id="@+id/statusTv"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:maxLines="3"-->
+<!--                android:text="Love to Travel across the world"-->
+<!--                android:textColor="@android:color/black"-->
+<!--                android:textStyle="bold" />-->
 
 
         </LinearLayout>
@@ -138,7 +138,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:text="250"
+                    android:text="0"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
@@ -166,7 +166,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:text="25k"
+                    android:text="0k"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
@@ -194,7 +194,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:text="250"
+                    android:text="0"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />

@@ -4,13 +4,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.example.soulforge.adapter.ViewPagerAdapter;
 import com.example.soulforge.fragments.Search;
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilterInputStream;
+import java.io.IOException;
+
 import static com.example.soulforge.R.layout.activity_main;
+import static com.example.soulforge.utils.Constants.PREF_DIRECTORY;
+import static com.example.soulforge.utils.Constants.PREF_NAME;
 
 public class MainActivity extends AppCompatActivity implements Search.OnDataPass {
 
@@ -40,7 +53,13 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_search));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_add));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_heart));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_heart_fill));
+
+        SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        String directory = preferences.getString(PREF_DIRECTORY, "");
+        Bitmap bitmap = loadProfileImage(directory);
+        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+
+        tabLayout.addTab(tabLayout.newTab().setIcon(drawable));
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
@@ -72,9 +91,9 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                     case 3:
                         tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart);
                         break;
-                    case 4:
-                        tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
-                        break;
+//                    case 4:
+//                        tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
+//                        break;
                 }
             }
 
@@ -94,9 +113,9 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                     case 3:
                         tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart);
                         break;
-                    case 4:
-                        tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
-                        break;
+//                    case 4:
+//                        tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
+//                        break;
                 }
 
             }
@@ -117,15 +136,25 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                     case 3:
                         tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart_fill);
                         break;
-                    case 4:
-                        tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
-                        break;
+//                    case 4:
+//                        tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
+//                        break;
                 }
 
             }
         });
 
     }
+    private Bitmap loadProfileImage(String directory){
+        try{
+            File file = new File(directory, "profile.png");
+            return BitmapFactory.decodeStream(new FileInputStream(file));
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static String USER_ID;
     public static boolean IS_SEARCHED_USER = false;
 

@@ -49,6 +49,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,6 +155,7 @@ public class Add extends Fragment {
         map.put("description", description);
         map.put("imageUrl", imageURL);
         map.put("timestamp", FieldValue.serverTimestamp());
+
 
         map.put("name", user.getDisplayName());
         map.put("profileImage",String.valueOf(user.getPhotoUrl()));
