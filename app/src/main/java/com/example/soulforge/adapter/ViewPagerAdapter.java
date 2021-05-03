@@ -5,15 +5,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.soulforge.fragments.Add;
-
-import com.example.soulforge.fragments.Home;
-import com.example.soulforge.fragments.Notification;
-import com.example.soulforge.fragments.Profile;
-import com.example.soulforge.fragments.Search;
+import com.example.soulforge.fragments.AddPostFragment;
+import static com.example.soulforge.utils.Constants.IS_FROM_HOME;
+import static com.example.soulforge.utils.Constants.IS_FROM_NOTIFICATION;
+import static com.example.soulforge.utils.Constants.IS_SEARCHED_USER;
+import com.example.soulforge.fragments.HomeFragment;
+import com.example.soulforge.fragments.NotificationFragment;
+import com.example.soulforge.fragments.ProfileFragment;
+import com.example.soulforge.fragments.SearchFragment;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
-
     int noOfTabs;
 
     public ViewPagerAdapter(@NonNull FragmentManager fm, int noOfTabs) {
@@ -21,22 +22,20 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         this.noOfTabs = noOfTabs;
     }
 
-
     @NonNull
     @Override
     public Fragment getItem(int position) {
-
-        switch(position){
+        switch (position) {
             case 0:
-                return new Home();
+                return new HomeFragment();
             case 1:
-                return new Search();
+                return new SearchFragment();
             case 2:
-                return new Add();
+                return new AddPostFragment();
             case 3:
-                return new Notification();
+                return new NotificationFragment();
             case 4:
-                return new Profile();
+                return new ProfileFragment();
 
             default:
                 return null;

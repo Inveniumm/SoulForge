@@ -1,7 +1,5 @@
 package com.example.soulforge.adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +15,11 @@ import com.example.soulforge.model.GalleryImages;
 
 import java.util.List;
 
+//Its showing the user uploaded post
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryHolder> {
-
     private List<GalleryImages> list;
-    SendImage onSendImage;
+    private SendImage onSendImage;
+
     public GalleryAdapter(List<GalleryImages> list) {
         this.list = list;
     }
@@ -41,16 +40,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryH
                 .load(list.get(position).getPicUri())
                 .into(holder.imageView);
 
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseImage(list.get(position).getPicUri());
-            }
-        });
+        holder.imageView.setOnClickListener(v -> chooseImage(list.get(position).getPicUri()));
     }
 
     private void chooseImage(Uri picUri) {
-
         onSendImage.onSend(picUri);
     }
 
@@ -70,7 +63,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryH
 
     public interface SendImage {
         void onSend(Uri picUri);
-
     }
 
     public void SendImage(SendImage sendImage){

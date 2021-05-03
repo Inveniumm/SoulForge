@@ -2,18 +2,27 @@ package com.example.soulforge.model;
 
 public class Users {
 
-    private String email, name, profileImage, uid, status;
+    private String email, name, profileImage, uid, status, deviceToken;
 
     public Users() {
 
     }
 
-    public Users(String email, String name, String profileImage, String uid, String status) {
+    public Users(String email, String name, String profileImage, String uid, String status, String deviceToken) {
         this.email = email;
         this.name = name;
         this.profileImage = profileImage;
         this.uid = uid;
         this.status = status;
+        this.deviceToken=deviceToken;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
     public String getEmail() {

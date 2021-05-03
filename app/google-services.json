@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "527401676781",
+    "firebase_url": "https://soulforge-2e72d-default-rtdb.firebaseio.com",
     "project_id": "soulforge-2e72d",
     "storage_bucket": "soulforge-2e72d.appspot.com"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "527401676781-890k084qfpcouqdujd01c80ivnbbi2rl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.soulforge",
+            "certificate_hash": "1240a98d1d622d98e261e4ea62b09446a4ffbc8a"
+          }
+        },
+        {
+          "client_id": "527401676781-nf8as3re7pf6v254e8vl71ivo0rqgjgu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.soulforge",
+            "certificate_hash": "b85ebf7986863394daaf7fece6c0e79769182a40"
+          }
+        },
         {
           "client_id": "527401676781-vln3gfbrqi0vu0b0p2c24b8ucekh8ikh.apps.googleusercontent.com",
           "client_type": 1,

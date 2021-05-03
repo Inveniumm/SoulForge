@@ -16,14 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.soulforge.R;
-import com.example.soulforge.ReplacerActivity;
+import com.example.soulforge.activities.ReplacerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import static com.example.soulforge.fragments.CreateAccountFragment.EMAIL_REGEX;
-
-
 public class ForgotPassword extends Fragment {
     private TextView loginTv;
     private Button recoverBtn;
@@ -35,7 +33,6 @@ public class ForgotPassword extends Fragment {
     public ForgotPassword() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +51,6 @@ public class ForgotPassword extends Fragment {
     }
 
     private void init(View view){
-
         loginTv = view.findViewById(R.id.loginTV);
         emailEt = view.findViewById(R.id.emailET);
         recoverBtn = view.findViewById(R.id.recoverBtn);
@@ -64,43 +60,30 @@ public class ForgotPassword extends Fragment {
     }
 
     private void clickListener(){
+        loginTv.setOnClickListener(v -> ((ReplacerActivity)getActivity()).setFragment(new LoginFragment()));
 
-        loginTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ReplacerActivity)getActivity()).setFragment(new LoginFragment());
+        recoverBtn.setOnClickListener(v -> {
+            String email = emailEt.getText().toString();
+
+            if(email.isEmpty()|| !email.matches(EMAIL_REGEX)){
+                emailEt.setError("Input valid email");
+                return;
             }
+
+            progressBar.setVisibility(View.VISIBLE);
+
+            auth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        if(task.isSuccessful()){
+                            Toast.makeText(getContext(), "Password reset email sent successfully", Toast.LENGTH_SHORT).show();
+                            emailEt.setText("");
+                        }else{
+                            String errMsg = task.getException().getMessage();
+                            Toast.makeText(getContext(), "Error: "+ errMsg, Toast.LENGTH_SHORT).show();
+                        }
+
+                        progressBar.setVisibility(View.GONE);
+                    });
         });
-
-        recoverBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEt.getText().toString();
-
-                if(email.isEmpty()|| !email.matches(EMAIL_REGEX)){
-                    emailEt.setError("Input valid email");
-                    return;
-                }
-
-                progressBar.setVisibility(View.VISIBLE);
-
-                auth.sendPasswordResetEmail(email)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(getContext(), "Password reset email sent successfully", Toast.LENGTH_SHORT).show();
-                                    emailEt.setText("");
-                                }else{
-                                    String errMsg = task.getException().getMessage();
-                                    Toast.makeText(getContext(), "Error: "+ errMsg, Toast.LENGTH_SHORT).show();
-                                }
-
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
-            }
-        });
-
     }
 }

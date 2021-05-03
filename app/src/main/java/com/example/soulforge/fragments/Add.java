@@ -145,7 +145,7 @@ public class Add extends Fragment {
     private void uploadData(String imageURL) {
 
 
-        CollectionReference reference = FirebaseFirestore.getInstance().collection("Users")
+        CollectionReference reference = FirebaseFirestore.getInstance().collection("User")
                 .document(user.getUid()).collection("Post Images");
         String id = reference.document().getId();
         String description = descET.getText().toString();

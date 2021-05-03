@@ -17,61 +17,72 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.soulforge.R;
 import com.example.soulforge.model.HomeModel;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
-public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
-
+public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
+    private Context context;
     private List<HomeModel> list;
-    Context context;
+    private PostSelected postSelected;
+    private String userId;
 
-    public HomeAdapter(List<HomeModel> list, Context context) {
+    public HomeAdapter(List<HomeModel> list, Context context, PostSelected postSelected, String userId) {
         this.list = list;
         this.context = context;
+        this.postSelected = postSelected;
+        this.userId = userId;
     }
 
+    public interface PostSelected {
+        void onPostSelected(HomeModel post, int position);
 
+        void onCommentSelected(HomeModel post, int position);
+
+        void shareSelectedPost(HomeModel post, int position);
+
+        void getSelectedUserId(String id);
+    }
 
     @NonNull
     @Override
     public HomeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_items,  parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_items, parent, false);
         return new HomeAdapter.HomeHolder(view);
-
     }
+
     @Override
-    public int getItemViewType(int position)
-    {
+    public int getItemViewType(int position) {
         return position;
     }
 
-
-
-
     @Override
     public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
+        holder.model = list.get(position);
         holder.nameTv.setText(list.get(position).getName());
-        holder.timeTv.setText(""+list.get(position).getTimestamp());
+        holder.timeTv.setText("" + list.get(position).getTimestamp());
 
+        List<String> users = list.get(position).getLikedBy();
+        if (users.size() > 0) {
+            for (int i = 0; i < users.size(); i++) {
+                if (users.get(i).equals(userId)) {
+                    holder.likeBtn.setImageResource(R.drawable.ic_heart_red);
+                }
+            }
+        }
 
         int count = list.get(position).getLikeCount();
-        if(count ==0){
+        if (count == 0) {
             holder.likeCountTv.setVisibility(View.VISIBLE);
-        }else if (count == 1){
+        } else if (count == 1) {
             holder.likeCountTv.setText(count + " like");
-        }else{
+        } else {
             holder.likeCountTv.setText(count + " likes");
         }
 
         holder.descriptionTv.setText(list.get(position).getDescription());
-
-
         Random random = new Random();
 
         int color = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
@@ -92,11 +103,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
 
     @Override
     public int getItemCount() {
-
         return list.size();
     }
 
-    static class HomeHolder extends RecyclerView.ViewHolder{
+    class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private HomeModel model;
         private CircleImageView profileImage;
         public TextView nameTv, timeTv, likeCountTv, descriptionTv;
         private ImageView imageView;
@@ -114,8 +125,26 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder>{
             commentBtn = itemView.findViewById(R.id.commentBtn);
             shareBtn = itemView.findViewById(R.id.shareBtn);
             descriptionTv = itemView.findViewById(R.id.descTv);
+            likeBtn.setOnClickListener(this);
+            commentBtn.setOnClickListener(this);
+            shareBtn.setOnClickListener(this);
+            profileImage.setOnClickListener(this);
+            nameTv.setOnClickListener(this);
+        }
 
-
+        @Override
+        public void onClick(View v) {
+            if (v == likeBtn) {
+                postSelected.onPostSelected(list.get(getAdapterPosition()), getAdapterPosition());
+            } else if (v == commentBtn) {
+                postSelected.onCommentSelected(list.get(getAdapterPosition()), getAdapterPosition());
+            } else if (v == shareBtn) {
+                postSelected.shareSelectedPost(list.get(getAdapterPosition()), getAdapterPosition());
+            } else if (v == profileImage) {
+                postSelected.getSelectedUserId(list.get(getAdapterPosition()).getUid());
+            } else if (v == nameTv) {
+                postSelected.getSelectedUserId(list.get(getAdapterPosition()).getUid());
+            }
         }
     }
 }

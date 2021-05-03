@@ -14,7 +14,7 @@
         android:layout_marginTop="7dp"
         android:gravity="center"
         android:text="Login"
-        android:textColor="#808080"
+        android:textColor="@color/black"
         android:textSize="32sp"
         android:textStyle="bold" />
 
@@ -22,100 +22,59 @@
         android:id="@+id/ll1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
-
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/emailET"
-            android:layout_width= "match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:padding="12dp"
-            android:textSize="24sp"
-            android:layout_margin= "8dp"
-            android:background="@drawable/btn_bg"
-            android:textStyle="bold"
-            android:hint="Email"/>
+            style="@style/editTextStyle"
+            android:hint="@string/email" />
 
         <EditText
             android:id="@+id/passwordET"
-            android:textColor="#000000"
-            android:layout_width= "match_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:textSize="24sp"
-            android:layout_margin= "8dp"
-            android:background="@drawable/btn_bg"
-            android:textStyle="bold"
-            android:hint="Password"/>
+            style="@style/editTextStyle"
+            android:hint="@string/password"
+            android:inputType="textPassword" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="-40dp"
-            android:text="Forgot Password"
-            android:id= "@+id/forgotTv"
-            android:textColor="#808080"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:id="@+id/forgotTv"
+            style="@style/textStyle"
+            android:layout_gravity="right"
+            android:layout_marginBottom="50dp"
+            android:text="@string/forgot_password" />
 
+        <Button
+            android:id="@+id/loginBtn"
+            style="@style/buttonStyle"
+            android:text="@string/login" />
 
+        <Button
+            android:id="@+id/googleSignInBtn"
+            style="@style/buttonStyle"
+            android:background="@drawable/google_btn_bg"
+            android:text="@string/login_with_gmail" />
     </LinearLayout>
 
     <ProgressBar
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/progressBar"
-        android:layout_below="@+id/ll1"
-        android:layout_above="@id/loginBtn"
-        android:visibility="gone"
-        />
-
-    <Button
-        android:id="@+id/googleSignInBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login With Gmail"
-        android:textSize="24sp"
-        android:background="@drawable/btn_bg"
-        android:gravity="center"
-        android:layout_above="@id/loginBtn"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textColor="#fff"
-        android:layout_marginBottom="16dp"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:textSize="24sp"
-        android:background="@drawable/btn_bg"
-        android:gravity="center"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textColor="#fff"
-        android:layout_above="@id/signUpTv"
-        android:layout_marginBottom="16dp"
-        android:id="@+id/loginBtn"/>
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/signUpTv"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="26dp"
-        android:textSize="24sp"
-        android:text= "Create a new account"
-        android:textStyle="bold"
+        android:layout_below="@+id/ll1"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
-        android:textColor="@color/colorGreen"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll1"
+        android:gravity="center"
+        android:orientation="vertical">
 
-
+        <TextView
+            android:id="@+id/signUpTv"
+            style="@style/textStyle"
+            android:text="@string/create_a_new_account" />
+    </LinearLayout>
 </RelativeLayout>
 
 

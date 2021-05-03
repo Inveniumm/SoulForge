@@ -6,9 +6,14 @@
     <string name="following">Following</string>
     <string name="posts">Posts</string>
     <string name="title_activity_replacer">ReplacerActivity</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
+
     <string name="hello_world">Hello Square World!</string>
+    <string name="favouties">Favourites</string>
+    <string name="forgot_password"><u>Forgot Password</u></string>
+    <string name="create_a_new_account"><u>Create a new account</u></string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="login_with_gmail">Login With Gmail</string>
+    <string name="sever_key">AAAAesuW7-0:APA91bF_lyhJMJnQup1AjcTUP6FscJTtIblhAEiyb40Twth5RQ3IhnvBm8P7DGmwfKHq0KJyRTLInlZVHPqbsB9zAeQdjMDAhRpf86zpPEkenT_HOccg--d7133LO5tO7jcujak6Gr3W</string>
 </resources>

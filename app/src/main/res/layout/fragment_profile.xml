@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.Profile">
+    tools:context=".fragments.ProfileFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -34,15 +34,15 @@
                 android:textStyle="bold"
                 tools:ignore="RelativeOverlap" />
 
-            <ImageButton
-                android:id="@+id/logoutTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_margin="12dp"
-                android:background="@drawable/ic_menu"
-                android:contentDescription="@null" />
+<!--            <ImageButton-->
+<!--                android:id="@+id/logoutTv"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_alignParentEnd="true"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:layout_margin="12dp"-->
+<!--                android:background="@drawable/ic_menu"-->
+<!--                android:contentDescription="@null" />-->
 
 
         </RelativeLayout>
@@ -86,8 +86,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="center"
+            android:gravity="end"
             android:orientation="vertical">
+            <Button
+                android:id="@+id/logoutBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_bg"
+                android:layout_marginEnd="16dp"
+                android:text="Logout"
+                android:textColor="@android:color/white"
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/nameTv"
@@ -166,7 +175,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:text="0k"
+                    android:text="0"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />

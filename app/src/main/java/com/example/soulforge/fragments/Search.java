@@ -64,7 +64,7 @@ public class Search extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
-        reference = FirebaseFirestore.getInstance().collection("Users");
+        reference = FirebaseFirestore.getInstance().collection("User");
 
         loadUserData();
 

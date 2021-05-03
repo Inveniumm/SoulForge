@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -76,6 +78,7 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.ContentValues.TAG;
 import static com.example.soulforge.MainActivity.IS_SEARCHED_USER;
 import static com.example.soulforge.MainActivity.USER_ID;
 import static com.example.soulforge.utils.Constants.PREF_DIRECTORY;
@@ -122,7 +125,7 @@ public class Profile extends Fragment {
 
         init(view);
 
-        myRef = FirebaseFirestore.getInstance().collection("Users")
+        myRef = FirebaseFirestore.getInstance().collection("User")
                 .document(user.getUid());
 
         if (IS_SEARCHED_USER) {
@@ -144,7 +147,7 @@ public class Profile extends Fragment {
             followBtn.setVisibility(View.VISIBLE);
             countLayout.setVisibility(View.VISIBLE);
         }
-        userRef = FirebaseFirestore.getInstance().collection("Users")
+        userRef = FirebaseFirestore.getInstance().collection("User")
                 .document(userUID);
 
         loadBasicData();
@@ -380,7 +383,7 @@ public class Profile extends Fragment {
     private void loadPostImages() {
 
 
-        DocumentReference reference = FirebaseFirestore.getInstance().collection("Users").document(userUID);
+        DocumentReference reference = FirebaseFirestore.getInstance().collection("User").document(userUID);
         Query query = reference.collection("Post Images");
         FirestoreRecyclerOptions<PostImageModel> options = new FirestoreRecyclerOptions.Builder<PostImageModel>()
                 .setQuery(query, PostImageModel.class)
@@ -458,7 +461,7 @@ public class Profile extends Fragment {
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("profileImage", imageURL);
                                             map.put("date", FieldValue.serverTimestamp());
-                                            FirebaseFirestore.getInstance().collection("Users")
+                                            FirebaseFirestore.getInstance().collection("User")
                                                     .document(user.getUid())
                                                     .update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override

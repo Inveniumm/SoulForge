@@ -2,12 +2,16 @@ package com.example.soulforge.model;
 
 import com.google.firebase.firestore.ServerTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class HomeModel {
 
-    private String name, profileImage, imageUrl, uid, comments, description, id;
+    private String name, profileImage, imageUrl, uid, description, id;
+    private List<String> likedBy=new ArrayList<>();
+    private List<CommentModel> comments=new ArrayList<>();
 
     @ServerTimestamp
     private Date timestamp;
@@ -18,7 +22,7 @@ public class HomeModel {
     public HomeModel() {
     }
 
-    public HomeModel(String name, String profileImage, String imageUrl, String uid, String comments, String description, String id, Date timestamp, int likeCount) {
+    public HomeModel(String name, String profileImage, String imageUrl, String uid, List<CommentModel> comments, String description, String id, Date timestamp, int likeCount, List<String> likedUsers) {
         this.name = name;
         this.profileImage = profileImage;
         this.imageUrl = imageUrl;
@@ -28,6 +32,15 @@ public class HomeModel {
         this.id = id;
         this.timestamp = timestamp;
         this.likeCount = likeCount;
+        this.likedBy = likedUsers;
+    }
+
+    public List<String> getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(List<String> likedBy) {
+        this.likedBy = likedBy;
     }
 
     public String getName() {
@@ -62,11 +75,11 @@ public class HomeModel {
         this.uid = uid;
     }
 
-    public String getComments() {
+    public List<CommentModel> getComments() {
         return comments;
     }
 
-    public void setComments(String comments) {
+    public void setComments(List<CommentModel> comments) {
         this.comments = comments;
     }
 

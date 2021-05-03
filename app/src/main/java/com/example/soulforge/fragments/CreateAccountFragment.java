@@ -16,27 +16,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.soulforge.MainActivity;
+import com.example.soulforge.activities.MainActivity;
 import com.example.soulforge.R;
-import com.example.soulforge.ReplacerActivity;
+import com.example.soulforge.activities.ReplacerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 public class CreateAccountFragment extends Fragment {
-
     private EditText nameEt, emailEt, passwordEt, confirmPasswordEt;
     private ProgressBar progressBar;
     private TextView loginTv;
@@ -44,12 +41,10 @@ public class CreateAccountFragment extends Fragment {
     private FirebaseAuth auth;
     DatabaseReference reference;
 
-
     public static final String EMAIL_REGEX = "(.+)@(.+)$";
 
-    public  CreateAccountFragment() {
+    public CreateAccountFragment() {
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,16 +54,14 @@ public class CreateAccountFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
-
         clickListener();
     }
 
-
-    private void init(View view){
+    private void init(View view) {
         nameEt = view.findViewById(R.id.nameET);
         emailEt = view.findViewById(R.id.emailET);
         passwordEt = view.findViewById(R.id.passwordET);
@@ -77,60 +70,47 @@ public class CreateAccountFragment extends Fragment {
         signUpBtn = view.findViewById(R.id.signUpBtn);
         progressBar = view.findViewById(R.id.progressBar);
 
-        auth =  FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
     }
 
-    private void clickListener(){
-        loginTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void clickListener() {
+        loginTv.setOnClickListener(v -> ((ReplacerActivity) getActivity()).setFragment(new LoginFragment()));
 
-                ((ReplacerActivity) getActivity()).setFragment(new LoginFragment());
+        signUpBtn.setOnClickListener(v -> {
+            String name = nameEt.getText().toString();
+            String email = emailEt.getText().toString();
+            String password = passwordEt.getText().toString();
+            String confirmPassword = confirmPasswordEt.getText().toString();
 
+            if (name.isEmpty() || name.equals(" ")) {
+                nameEt.setError("Please input a valid name");
+                return;
             }
-        });
 
-        signUpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String name = nameEt.getText().toString();
-                String email = emailEt.getText().toString();
-                String password = passwordEt.getText().toString();
-                String confirmPassword = confirmPasswordEt.getText().toString();
-
-                if (name.isEmpty() || name.equals(" ")){
-                    nameEt.setError("Please input a valid name");
-                    return;
-                }
-
-                if (email.isEmpty() || !email.matches(EMAIL_REGEX)){
-                    emailEt.setError("Please input valid email");
-                    return;
-                }
-
-                if (password.isEmpty() || password.length()< 6){
-                    passwordEt.setError("Please input a valid password longer than 6 characters");
-                    return;
-                }
-                if (confirmPassword.isEmpty() || !password.equals(confirmPassword)){
-                    passwordEt.setError("Passwords do not match");
-                    return;
-                }
-
-                progressBar.setVisibility(View.VISIBLE);
-
-                createAccount(name, email, password);
+            if (email.isEmpty() || !email.matches(EMAIL_REGEX)) {
+                emailEt.setError("Please input valid email");
+                return;
             }
+
+            if (password.isEmpty() || password.length() < 6) {
+                passwordEt.setError("Please input a valid password longer than 6 characters");
+                return;
+            }
+            if (confirmPassword.isEmpty() || !password.equals(confirmPassword)) {
+                passwordEt.setError("Passwords do not match");
+                return;
+            }
+
+            progressBar.setVisibility(View.VISIBLE);
+
+            createAccount(name, email, password);
         });
     }
 
-    private void createAccount(final String name, final String email, String password){
-
-        auth.createUserWithEmailAndPassword(email,password)
+    private void createAccount(final String name, final String email, String password) {
+        auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-
+                    if (task.isSuccessful()) {
                         FirebaseUser user = auth.getCurrentUser();
 
                         UserProfileChangeRequest.Builder request = new UserProfileChangeRequest.Builder();
@@ -139,30 +119,23 @@ public class CreateAccountFragment extends Fragment {
                         user.updateProfile(request.build());
 
                         user.sendEmailVerification()
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            Toast.makeText(getContext(), "Email Verification link sent", Toast.LENGTH_SHORT).show();
-                                        }
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        Toast.makeText(getContext(), "Email Verification link sent", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                         uploadUser(user, name, email);
-
                     } else {
                         progressBar.setVisibility(View.GONE);
                         String exception = task.getException().getMessage();
-                        Toast.makeText(getContext(), "Error: "+exception, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error: " + exception, Toast.LENGTH_SHORT).show();
                     }
                 });
-
     }
 
-    private void uploadUser(FirebaseUser user, String name, String email){
-
+    private void uploadUser(FirebaseUser user, String name, String email) {
         List<String> list = new ArrayList<>();
         List<String> list1 = new ArrayList<>();
-
 
         HashMap<String, Object> map = new HashMap<>();
         map.put("name", name);
@@ -174,30 +147,25 @@ public class CreateAccountFragment extends Fragment {
 
         map.put("followers", list);
         map.put("following", list1);
+        map.put("deviceToken", FirebaseInstanceId.getInstance().getToken());
 
         reference = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
         reference.setValue(map);
 
-
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
                 .set(map)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        assert getActivity() != null;
+                        progressBar.setVisibility(View.GONE);
+                        startActivity(new Intent(getActivity().getApplicationContext(), MainActivity.class));
+                        getActivity().finish();
 
-                        if (task.isSuccessful()){
-                            assert getActivity() !=null;
-                            progressBar.setVisibility(View.GONE);
-                            startActivity(new Intent(getActivity().getApplicationContext(), MainActivity.class));
-                            getActivity().finish();
-
-                        }else{
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Error: "+task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getContext(), "Error: " + task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
 }

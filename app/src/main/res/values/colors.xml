@@ -5,4 +5,10 @@
     <color name="colorAccent">#00552E</color>
 
     <color name="colorGreen">#004827</color>
+    <color name="MessageBg">#ECEFF1</color>
+    <color name="red">#d44833</color>
+    <color name="black">#050505</color>
+    <color name="white">#FFFFFF</color>
+    <color name="hint">#abb6bd</color>
+    <color name="lable_bg">#BF00552E</color>
 </resources>

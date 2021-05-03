@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 
-import static com.example.soulforge.R.id.logoutTv;
 import static com.example.soulforge.R.layout.activity_main;
 import static com.example.soulforge.utils.Constants.PREF_DIRECTORY;
 import static com.example.soulforge.utils.Constants.PREF_NAME;
@@ -185,16 +184,5 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
             super.onBackPressed();
     }
 
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case logoutTv:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MainActivity.this, SplashActivity.class));
-                finish();
-                return true;
-        }
-        return false;
-    }
+
 }
